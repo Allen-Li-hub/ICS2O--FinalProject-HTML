@@ -1,10 +1,10 @@
+("use strict")
+
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register("/ICS2O--FinalProject-HTML/sw.js", {
     scope: "/ICS2O--FinalProject-HTML/",
   })
 }
-
-;("use strict")
 
 const selectionButtons = document.querySelectorAll("[data-selection]")
 const finalColumn = document.querySelector("[data-final-column]")
