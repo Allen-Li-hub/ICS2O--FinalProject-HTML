@@ -1,4 +1,4 @@
-("use strict")
+;("use strict")
 
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register("/ICS2O--FinalProject-HTML/sw.js", {
