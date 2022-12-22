@@ -6,53 +6,65 @@ if (navigator.serviceWorker) {
   
   "use strict"
   
-  const ROCK = 1
-  const PAPER = 2
-  const SCISSORS = 3
-  
-  function updateSliderValue(valueFromSlider) {
-    document.getElementById("slider-value").innerHTML = valueFromSlider
+  const selectionButtons = document.querySelectorAll('[data-selection]')
+  const finalColumn = document.querySelector('[data-final-column]')
+  const computerScoreSpan = document.querySelector('[data-computer-score]')
+  const yourScoreSpan = document.querySelector('[data-your-score]')
+  const SELECTIONS = [
+  {
+    name: 'rock',
+    emoji: '✊',
+    beats: 'scissors'
+  },
+  {
+    name: 'paper',
+    emoji: '✋',
+    beats: 'rock'
+  },
+  {
+    name: 'scissors',
+    emoji: '✌',
+    beats: 'paper'
   }
-  
-  
-  
-  function myButtonClicked() {
-    var random = Math.floor(Math.random() * 3) + 1
-    var paperSelected = document.getElementById("paper").checked
-    var rockSelected = document.getElementById("rock").checked
-    var scissorSelected = document.getElementById("scissor").checked
-    var message = "";
-  
-    if (random == ROCK) {
-      if (paperSelected) {
-        message = "The computer choose rock! You win!";
-      } else if (rockSelected) {
-        message = "The computer choose rock! It's a tie";
-      } else {
-        message = "The computer choose rock! You lose!";
-      }
-    } else if (random == PAPER) {
-          if (scissorSelected) {
-        message = "The computer choose paper! You win!";
-      } else if (paperSelected) {
-        message = "The computer choose paper! It's a tie";
-      } else {
-        message = "The computer choose paper! You lose!";
-          }
-    } else if (random == SCISSORS) {
-      if (rockSelected) {
-        message = "The computer choose Scissor! You win!";
-      } else if (scissorSelected) {
-        message = "The computer choose Scissor! It's a tie";
-      } else  {
-        message = "The computer choose Scissor! You lose!";
-          }
-    }
-  
-  
-    document.getElementById("hello-world").innerHTML = message;
-  }
-  
-  
-  
-  
+]
+
+selectionButtons.forEach(selectionButton => {
+  selectionButton.addEventListener('click', e => {
+    const selectionName = selectionButton.dataset.selection
+    const selection = SELECTIONS.find(selection => selection.name === selectionName)
+    makeSelection(selection)
+  })
+})
+
+function makeSelection(selection) {
+  const computerSelection = randomSelection()
+  const yourWinner = isWinner(selection, computerSelection)
+  const computerWinner = isWinner(computerSelection, selection)
+
+  addSelectionResult(computerSelection, computerWinner)
+  addSelectionResult(selection, yourWinner)
+
+  if (yourWinner) incrementScore(yourScoreSpan)
+  if (computerWinner) incrementScore(computerScoreSpan)
+}
+
+function incrementScore(scoreSpan) {
+  scoreSpan.innerText = parseInt(scoreSpan.innerText) + 1
+}
+
+function addSelectionResult(selection, winner) {
+  const div = document.createElement('div')
+  div.innerText = selection.emoji
+  div.classList.add('result-selection')
+  if (winner) div.classList.add('winner')
+  finalColumn.after(div)
+}
+
+function isWinner(selection, opponentSelection) {
+  return selection.beats === opponentSelection.name
+}
+
+function randomSelection() {
+  const randomIndex = Math.floor(Math.random() * SELECTIONS.length)
+  return SELECTIONS[randomIndex]
+}
